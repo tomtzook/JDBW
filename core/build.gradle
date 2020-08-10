@@ -9,10 +9,25 @@ repositories {
 }
 
 dependencies {
+    implementation group: 'com.github.tomtzook', name: 'castle', version: '1.0.0'
+
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.4.2'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.4.2'
     testImplementation group: 'org.junit.platform', name: 'junit-platform-runner', version: '1.2.0'
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.23.4'
     testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '2.23.0'
     testImplementation group: 'org.hamcrest', name: 'hamcrest', version: '2.1'
+
+    // jdbc driver for testing
+    testImplementation group: 'org.xerial', name: 'sqlite-jdbc', version: '3.27.2.1'
+}
+
+test {
+    useJUnitPlatform()
+
+    testLogging {
+        events "failed"
+        exceptionFormat "full"
+        showStackTraces true
+    }
 }
