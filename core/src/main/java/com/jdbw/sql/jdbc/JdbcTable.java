@@ -3,13 +3,14 @@ package com.jdbw.sql.jdbc;
 import com.jdbw.sql.Column;
 import com.jdbw.sql.Table;
 import com.jdbw.sql.exceptions.SqlException;
+import com.jdbw.sql.jdbc.meta.JdbcDatabaseMeta;
 
 public class JdbcTable implements Table {
 
     private final String mName;
-    private final DatabaseMeta mMeta;
+    private final JdbcDatabaseMeta mMeta;
 
-    public JdbcTable(String name, DatabaseMeta meta) {
+    public JdbcTable(String name, JdbcDatabaseMeta meta) {
         mName = name;
         mMeta = meta;
     }

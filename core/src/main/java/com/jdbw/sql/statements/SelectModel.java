@@ -1,4 +1,4 @@
-package com.jdbw.sql.statements.generic;
+package com.jdbw.sql.statements;
 
 import com.jdbw.sql.Column;
 import com.jdbw.sql.conditions.Condition;

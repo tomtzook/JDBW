@@ -1,4 +1,4 @@
-package com.jdbw.sql.statements.generic;
+package com.jdbw.sql.statements;
 
 import com.jdbw.sql.Column;
 import com.jdbw.sql.conditions.Condition;
@@ -7,7 +7,6 @@ import com.jdbw.sql.Limit;
 import com.jdbw.sql.OrderBy;
 import com.jdbw.sql.Table;
 import com.jdbw.sql.exceptions.SqlException;
-import com.jdbw.sql.statements.SelectStatement;
 
 import java.util.ArrayList;
 import java.util.Collection;

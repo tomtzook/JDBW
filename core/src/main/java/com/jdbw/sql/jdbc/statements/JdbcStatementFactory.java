@@ -6,9 +6,11 @@ import com.jdbw.sql.jdbc.Query;
 import com.jdbw.sql.jdbc.QueryBuilder;
 import com.jdbw.sql.jdbc.ResultRowParser;
 import com.jdbw.sql.jdbc.SqlObjectAdapter;
+import com.jdbw.sql.statements.InsertModel;
+import com.jdbw.sql.statements.InsertStatement;
+import com.jdbw.sql.statements.SelectModel;
 import com.jdbw.sql.statements.SelectStatement;
-import com.jdbw.sql.statements.generic.SelectModel;
-import com.jdbw.sql.statements.generic.StatementFactory;
+import com.jdbw.sql.statements.StatementFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -40,6 +42,19 @@ public class JdbcStatementFactory implements StatementFactory {
             fillParameters(statement, query.getParams());
 
             return new JdbcSelectStatement(statement, mResultRowParser, mModelLoader);
+        } catch (SQLException e) {
+            throw new SqlException(e);
+        }
+    }
+
+    @Override
+    public InsertStatement createInsert(InsertModel model) throws SqlException {
+        try {
+            Query query = mQueryBuilder.build(model);
+            PreparedStatement statement = mConnection.prepareStatement(query.getSql());
+            fillParameters(statement, query.getParams());
+
+            return new JdbcInsertStatement(statement);
         } catch (SQLException e) {
             throw new SqlException(e);
         }

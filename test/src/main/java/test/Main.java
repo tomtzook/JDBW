@@ -1,38 +1,46 @@
 package test;
 
 import com.jdbw.sql.Column;
-import com.jdbw.sql.QueryResult;
 import com.jdbw.sql.SqlDatabase;
 import com.jdbw.sql.Table;
 import com.jdbw.sql.exceptions.SqlException;
 import com.jdbw.sql.jdbc.ConnectionConfig;
 import com.jdbw.sql.jdbc.JdbcSqlDatabase;
-import test.models.User;
+import test.models.Person;
 
 import java.io.IOException;
 
 public class Main {
 
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/lucy1098db?serverTimezone=UTC";
-    private static final String DB_USERNAME = "lucy1098";
-    private static final String DB_PASSWORD = "lucy1098";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/jdbc";
+    private static final String DB_USERNAME = "testuser";
+    private static final String DB_PASSWORD = "testpassword";
     private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
 
     public static void main(String[] args) throws IOException, SqlException {
         ConnectionConfig connectionConfig = new ConnectionConfig(DB_URL, DB_USERNAME, DB_PASSWORD, DRIVER);
         try (SqlDatabase database = new JdbcSqlDatabase(connectionConfig)) {
-            Table table = database.table("users");
-            Column username = table.column("username");
-            Column password = table.column("password");
+            System.out.println(database.meta().allTables());
+            Table table = database.meta().table("person");
+            Column fname = table.column("fname");
+            Column lname = table.column("lname");
+            Column gender = table.column("gender");
 
             System.out.println(table);
-            System.out.println(username);
-            System.out.println(password);
+            System.out.println(fname);
+            System.out.println(lname);
+            System.out.println(gender);
+
+            database.insert(table)
+                    .column(fname, lname, gender)
+                    .valuesRaw("Terry", "Crews", "Male")
+                    .valuesRaw("Double", "Trouble", "Non-binary")
+                    .build()
+                    .execute();
 
             database.select(table)
-                    .where(password.equal("Sanandres12").and(username.equal("tomtzook")))
                     .build()
-                    .executeForEach(System.out::println, User.class);
+                    .executeForEach(System.out::println, Person.class);
         }
     }
 }

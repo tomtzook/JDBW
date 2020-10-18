@@ -1,10 +1,12 @@
 package com.jdbw.sql.jdbc;
 
 import com.jdbw.sql.Column;
+import com.jdbw.sql.ColumnValue;
 import com.jdbw.sql.conditions.Condition;
 import com.jdbw.sql.exceptions.SqlException;
 import com.jdbw.sql.jdbc.conditions.JdbcCondition;
-import com.jdbw.sql.statements.generic.SelectModel;
+import com.jdbw.sql.statements.InsertModel;
+import com.jdbw.sql.statements.SelectModel;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,10 +37,52 @@ public class QueryBuilder {
         return new Query(stringBuilder.toString(), params);
     }
 
+    public Query build(InsertModel model) throws SqlException {
+        StringBuilder stringBuilder = new StringBuilder();
+        List<Object> params = new ArrayList<>();
+
+        stringBuilder.append("INSERT INTO ")
+                .append(model.getTable().getName())
+                .append(' ');
+        if (!model.getColumns().isEmpty()) {
+            stringBuilder.append('(');
+            appendColumnList(stringBuilder, model.getColumns());
+            stringBuilder.append(") ");
+        }
+
+        stringBuilder.append("VALUES ");
+        for (Iterator<Collection<? extends ColumnValue>> iterator = model.getValues().iterator();
+             iterator.hasNext();) {
+            Collection<? extends ColumnValue> values = iterator.next();
+            stringBuilder.append('(');
+            appendValuesList(stringBuilder, params, values);
+            stringBuilder.append(')');
+
+            if (iterator.hasNext()) {
+                stringBuilder.append(',');
+            }
+        }
+
+        return new Query(stringBuilder.toString(), params);
+    }
+
     private void appendColumnList(StringBuilder stringBuilder, Collection<? extends Column> columns) {
         for (Iterator<? extends Column> iterator = columns.iterator(); iterator.hasNext();) {
             Column column = iterator.next();
             stringBuilder.append(column.getName());
+            if (iterator.hasNext()) {
+                stringBuilder.append(",");
+            }
+        }
+    }
+
+    private void appendValuesList(StringBuilder stringBuilder, List<Object> params,
+                                  Collection<? extends ColumnValue> values) {
+        for (Iterator<? extends ColumnValue> iterator = values.iterator(); iterator.hasNext();) {
+            ColumnValue value = iterator.next();
+            stringBuilder.append('?');
+            params.add(value.isNull() ? null : value.getRawValue());
+
             if (iterator.hasNext()) {
                 stringBuilder.append(",");
             }

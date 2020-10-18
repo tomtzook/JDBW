@@ -1,4 +1,4 @@
-package com.jdbw.sql.jdbc;
+package com.jdbw.sql.jdbc.meta;
 
 import com.jdbw.sql.Column;
 import com.jdbw.sql.ColumnFlag;
@@ -6,6 +6,9 @@ import com.jdbw.sql.ColumnType;
 import com.jdbw.sql.Table;
 import com.jdbw.sql.conditions.ConditionFactory;
 import com.jdbw.sql.exceptions.SqlException;
+import com.jdbw.sql.jdbc.JdbcColumn;
+import com.jdbw.sql.jdbc.JdbcTable;
+import com.jdbw.sql.meta.DatabaseMeta;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -14,21 +17,25 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
-public class DatabaseMeta {
+public class JdbcDatabaseMeta implements DatabaseMeta {
 
     private final Connection mConnection;
     private final ConditionFactory mConditionFactory;
 
-    public DatabaseMeta(Connection connection, ConditionFactory conditionFactory) {
+    public JdbcDatabaseMeta(Connection connection, ConditionFactory conditionFactory) {
         mConnection = connection;
         mConditionFactory = conditionFactory;
     }
 
-    public Table getTable(String name) throws SqlException {
+    @Override
+    public Table table(String name) throws SqlException {
         try {
             DatabaseMetaData metaData = mConnection.getMetaData();
-            try (ResultSet resultSet = metaData.getTables(null, null, "%s", new String[]{"TABLE"})) {
+            try (ResultSet resultSet = metaData.getTables(mConnection.getCatalog(), null,
+                    "%", null)) {
                 while (resultSet.next()) {
                     String tableName = resultSet.getString("TABLE_NAME");
                     if (tableName.equals(name)) {
@@ -38,6 +45,25 @@ public class DatabaseMeta {
             }
 
             throw new SqlException("Table not found: " + name);
+        } catch (SQLException e) {
+            throw new SqlException(e);
+        }
+    }
+
+    @Override
+    public Set<Table> allTables() throws SqlException {
+        try {
+            DatabaseMetaData metaData = mConnection.getMetaData();
+            try (ResultSet resultSet = metaData.getTables(mConnection.getCatalog(), null,
+                    "%", null)) {
+                Set<Table> tables = new HashSet<>();
+                while (resultSet.next()) {
+                    String tableName = resultSet.getString("TABLE_NAME");
+                    tables.add(new JdbcTable(tableName, this));
+                }
+
+                return tables;
+            }
         } catch (SQLException e) {
             throw new SqlException(e);
         }

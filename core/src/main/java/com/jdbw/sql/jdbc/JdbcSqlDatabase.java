@@ -6,10 +6,14 @@ import com.jdbw.sql.Table;
 import com.jdbw.sql.conditions.ConditionFactory;
 import com.jdbw.sql.exceptions.SqlException;
 import com.jdbw.sql.jdbc.conditions.JdbcConditionFactory;
+import com.jdbw.sql.jdbc.meta.JdbcDatabaseMeta;
 import com.jdbw.sql.jdbc.statements.JdbcStatementFactory;
+import com.jdbw.sql.meta.DatabaseMeta;
+import com.jdbw.sql.statements.InsertBuilder;
+import com.jdbw.sql.statements.InsertStatement;
 import com.jdbw.sql.statements.SelectStatement;
-import com.jdbw.sql.statements.generic.SelectBuilder;
-import com.jdbw.sql.statements.generic.StatementFactory;
+import com.jdbw.sql.statements.SelectBuilder;
+import com.jdbw.sql.statements.StatementFactory;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -21,13 +25,13 @@ public class JdbcSqlDatabase implements SqlDatabase {
     private final Connection mConnection;
     private final StatementFactory mStatementFactory;
     private final ConditionFactory mConditionFactory;
-    private final DatabaseMeta mMeta;
+    private final JdbcDatabaseMeta mMeta;
 
     public JdbcSqlDatabase(Connection connection, StatementFactory statementFactory, ConditionFactory conditionFactory) {
         mConnection = connection;
         mStatementFactory = statementFactory;
         mConditionFactory = conditionFactory;
-        mMeta = new DatabaseMeta(connection, mConditionFactory);
+        mMeta = new JdbcDatabaseMeta(connection, mConditionFactory);
     }
 
     public JdbcSqlDatabase(Connection connection) {
@@ -43,8 +47,8 @@ public class JdbcSqlDatabase implements SqlDatabase {
     }
 
     @Override
-    public Table table(String name) throws SqlException {
-        return mMeta.getTable(name);
+    public DatabaseMeta meta() throws SqlException {
+        return mMeta;
     }
 
     @Override
@@ -55,6 +59,11 @@ public class JdbcSqlDatabase implements SqlDatabase {
     @Override
     public SelectStatement.Builder select(Table table) {
         return new SelectBuilder(mStatementFactory, table);
+    }
+
+    @Override
+    public InsertStatement.Builder insert(Table table) {
+        return new InsertBuilder(mStatementFactory, table);
     }
 
     @Override
