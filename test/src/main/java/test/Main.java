@@ -1,7 +1,6 @@
 package test;
 
 import com.jdbw.sql.Column;
-import com.jdbw.sql.ColumnType;
 import com.jdbw.sql.QueryResult;
 import com.jdbw.sql.ResultRow;
 import com.jdbw.sql.SqlDatabase;
@@ -22,13 +21,13 @@ public class Main {
     public static void main(String[] args) throws IOException, SqlException {
         ConnectionConfig connectionConfig = new ConnectionConfig(DB_URL, DB_USERNAME, DB_PASSWORD, DRIVER);
         try (SqlDatabase database = new JdbcSqlDatabase(connectionConfig)) {
-            Table table = new Table("users");
-            Column username = new Column("username", ColumnType.TEXT);
-            Column password = new Column("password", ColumnType.TEXT);
+            Table table = database.table("users");
+            Column username = table.column("username");
+            Column password = table.column("password");
 
             try (QueryResult result = database.select(table)
                     .select(username)
-                    .where(database.conditions().equals(password, "Sanandres12").and(database.conditions().equals(username, "tomtzook")))
+                    .where(password.equal("Sanandres12").and(username.equal("tomtzook")))
                     .build()
                     .execute()) {
 

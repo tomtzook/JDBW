@@ -4,6 +4,11 @@ public enum ColumnType {
     INTEGER,
     REAL,
     TEXT,
-    BLOB
+    BLOB,
+    DATE,
+    TIMESTAMP,
+    TIME,
+    CHAR,
+    BOOLEAN
     ;
 }

@@ -20,11 +20,13 @@ public class JdbcSqlDatabase implements SqlDatabase {
     private final Connection mConnection;
     private final StatementFactory mStatementFactory;
     private final ConditionFactory mConditionFactory;
+    private final DatabaseMeta mMeta;
 
     public JdbcSqlDatabase(Connection connection, StatementFactory statementFactory, ConditionFactory conditionFactory) {
         mConnection = connection;
         mStatementFactory = statementFactory;
         mConditionFactory = conditionFactory;
+        mMeta = new DatabaseMeta(connection, mConditionFactory);
     }
 
     public JdbcSqlDatabase(Connection connection) {
@@ -37,6 +39,11 @@ public class JdbcSqlDatabase implements SqlDatabase {
 
     public JdbcSqlDatabase(ConnectionConfig connectionConfig) throws SqlException {
         this(openConnection(connectionConfig));
+    }
+
+    @Override
+    public Table table(String name) throws SqlException {
+        return mMeta.getTable(name);
     }
 
     @Override

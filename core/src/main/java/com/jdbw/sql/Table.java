@@ -1,14 +1,10 @@
 package com.jdbw.sql;
 
-public class Table {
+import com.jdbw.sql.exceptions.SqlException;
 
-    private final String mName;
+public interface Table {
 
-    public Table(String name) {
-        mName = name;
-    }
+    String getName();
 
-    public String getName() {
-        return mName;
-    }
+    Column column(String name) throws SqlException;
 }
