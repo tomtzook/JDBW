@@ -16,10 +16,10 @@ public interface InsertStatement {
         }
         Builder column(Collection<? extends Column> columns);
 
-        default Builder valuesRaw(Object... values) {
+        default Builder values(Object... values) {
             return valuesRaw(Arrays.asList(values));
         }
-        default Builder valuesRaw(Collection<? extends Object> values) {
+        default Builder valuesRaw(Collection<Object> values) {
             return values(values.stream()
                     .map(ColumnValue::ofNullable)
                     .collect(Collectors.toList()));

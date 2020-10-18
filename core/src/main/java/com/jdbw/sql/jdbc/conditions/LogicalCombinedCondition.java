@@ -14,7 +14,7 @@ public class LogicalCombinedCondition implements JdbcCondition {
     private final String mDelimiter;
 
     public LogicalCombinedCondition(Collection<Condition> conditions, String delimiter) {
-        mConditions = conditions;
+        mConditions = new ArrayList<>(conditions);
         mDelimiter = delimiter;
     }
 

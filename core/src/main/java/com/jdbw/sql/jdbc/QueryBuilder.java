@@ -5,13 +5,16 @@ import com.jdbw.sql.ColumnValue;
 import com.jdbw.sql.conditions.Condition;
 import com.jdbw.sql.exceptions.SqlException;
 import com.jdbw.sql.jdbc.conditions.JdbcCondition;
+import com.jdbw.sql.statements.DeleteModel;
 import com.jdbw.sql.statements.InsertModel;
 import com.jdbw.sql.statements.SelectModel;
+import com.jdbw.sql.statements.UpdateModel;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class QueryBuilder {
 
@@ -66,6 +69,41 @@ public class QueryBuilder {
         return new Query(stringBuilder.toString(), params);
     }
 
+    public Query build(UpdateModel model) throws SqlException {
+        StringBuilder stringBuilder = new StringBuilder();
+        List<Object> params = new ArrayList<>();
+
+        stringBuilder.append("UPDATE ")
+                .append(model.getTable().getName());
+
+        if (!model.getValues().isEmpty()) {
+            stringBuilder.append(" SET ");
+            appendValuesMap(stringBuilder, params, model.getValues());
+        }
+
+        if (!model.getWhere().isEmpty()) {
+            stringBuilder.append(" WHERE ");
+            appendConditionList(stringBuilder, params, model.getWhere());
+        }
+
+        return new Query(stringBuilder.toString(), params);
+    }
+
+    public Query build(DeleteModel model) throws SqlException {
+        StringBuilder stringBuilder = new StringBuilder();
+        List<Object> params = new ArrayList<>();
+
+        stringBuilder.append("DELETE FROM ")
+                .append(model.getTable().getName());
+
+        if (!model.getWhere().isEmpty()) {
+            stringBuilder.append(" WHERE ");
+            appendConditionList(stringBuilder, params, model.getWhere());
+        }
+
+        return new Query(stringBuilder.toString(), params);
+    }
+
     private void appendColumnList(StringBuilder stringBuilder, Collection<? extends Column> columns) {
         for (Iterator<? extends Column> iterator = columns.iterator(); iterator.hasNext();) {
             Column column = iterator.next();
@@ -82,6 +120,21 @@ public class QueryBuilder {
             ColumnValue value = iterator.next();
             stringBuilder.append('?');
             params.add(value.isNull() ? null : value.getRawValue());
+
+            if (iterator.hasNext()) {
+                stringBuilder.append(",");
+            }
+        }
+    }
+
+    private void appendValuesMap(StringBuilder stringBuilder, List<Object> params,
+                                  Map<Column, ColumnValue> values) {
+        for (Iterator<Map.Entry<Column, ColumnValue>> iterator = values.entrySet().iterator();
+             iterator.hasNext();) {
+            Map.Entry<Column, ColumnValue> entry = iterator.next();
+            stringBuilder.append(entry.getKey().getName());
+            stringBuilder.append("=?");
+            params.add(entry.getValue().isNull() ? null : entry.getValue().getRawValue());
 
             if (iterator.hasNext()) {
                 stringBuilder.append(",");

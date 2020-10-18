@@ -1,11 +1,10 @@
 package test;
 
-import com.jdbw.sql.Column;
 import com.jdbw.sql.SqlDatabase;
-import com.jdbw.sql.Table;
 import com.jdbw.sql.exceptions.SqlException;
 import com.jdbw.sql.jdbc.ConnectionConfig;
 import com.jdbw.sql.jdbc.JdbcSqlDatabase;
+import test.dao.PersonDao;
 import test.models.Person;
 
 import java.io.IOException;
@@ -20,27 +19,15 @@ public class Main {
     public static void main(String[] args) throws IOException, SqlException {
         ConnectionConfig connectionConfig = new ConnectionConfig(DB_URL, DB_USERNAME, DB_PASSWORD, DRIVER);
         try (SqlDatabase database = new JdbcSqlDatabase(connectionConfig)) {
-            System.out.println(database.meta().allTables());
-            Table table = database.meta().table("person");
-            Column fname = table.column("fname");
-            Column lname = table.column("lname");
-            Column gender = table.column("gender");
+            PersonDao personDao = new PersonDao(database, database.meta().table("person"));
 
-            System.out.println(table);
-            System.out.println(fname);
-            System.out.println(lname);
-            System.out.println(gender);
-
-            database.insert(table)
-                    .column(fname, lname, gender)
-                    .valuesRaw("Terry", "Crews", "Male")
-                    .valuesRaw("Double", "Trouble", "Non-binary")
-                    .build()
-                    .execute();
-
-            database.select(table)
-                    .build()
-                    .executeForEach(System.out::println, Person.class);
+            Person person = new Person("Terry", "Crews", "Male");
+            personDao.add(person);
+            System.out.println(personDao.selectAll());
+            person = personDao.update(person, new Person("Terry2", "Crews", "Male"));
+            System.out.println(personDao.selectAll());
+            personDao.delete(person);
+            System.out.println(personDao.selectAll());
         }
     }
 }

@@ -6,11 +6,15 @@ import com.jdbw.sql.jdbc.Query;
 import com.jdbw.sql.jdbc.QueryBuilder;
 import com.jdbw.sql.jdbc.ResultRowParser;
 import com.jdbw.sql.jdbc.SqlObjectAdapter;
+import com.jdbw.sql.statements.DeleteModel;
+import com.jdbw.sql.statements.DeleteStatement;
 import com.jdbw.sql.statements.InsertModel;
 import com.jdbw.sql.statements.InsertStatement;
 import com.jdbw.sql.statements.SelectModel;
 import com.jdbw.sql.statements.SelectStatement;
 import com.jdbw.sql.statements.StatementFactory;
+import com.jdbw.sql.statements.UpdateModel;
+import com.jdbw.sql.statements.UpdateStatement;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -55,6 +59,32 @@ public class JdbcStatementFactory implements StatementFactory {
             fillParameters(statement, query.getParams());
 
             return new JdbcInsertStatement(statement);
+        } catch (SQLException e) {
+            throw new SqlException(e);
+        }
+    }
+
+    @Override
+    public UpdateStatement createUpdate(UpdateModel model) throws SqlException {
+        try {
+            Query query = mQueryBuilder.build(model);
+            PreparedStatement statement = mConnection.prepareStatement(query.getSql());
+            fillParameters(statement, query.getParams());
+
+            return new JdbcUpdateStatement(statement);
+        } catch (SQLException e) {
+            throw new SqlException(e);
+        }
+    }
+
+    @Override
+    public DeleteStatement createDelete(DeleteModel model) throws SqlException {
+        try {
+            Query query = mQueryBuilder.build(model);
+            PreparedStatement statement = mConnection.prepareStatement(query.getSql());
+            fillParameters(statement, query.getParams());
+
+            return new JdbcDeleteStatement(statement);
         } catch (SQLException e) {
             throw new SqlException(e);
         }

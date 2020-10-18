@@ -3,16 +3,16 @@ package com.jdbw.sql.jdbc.statements;
 import com.castle.util.throwables.ThrowableChain;
 import com.castle.util.throwables.Throwables;
 import com.jdbw.sql.exceptions.SqlException;
-import com.jdbw.sql.statements.InsertStatement;
+import com.jdbw.sql.statements.DeleteStatement;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class JdbcInsertStatement implements InsertStatement {
+public class JdbcDeleteStatement implements DeleteStatement {
 
     private final PreparedStatement mStatement;
 
-    public JdbcInsertStatement(PreparedStatement statement) {
+    public JdbcDeleteStatement(PreparedStatement statement) {
         mStatement = statement;
     }
 

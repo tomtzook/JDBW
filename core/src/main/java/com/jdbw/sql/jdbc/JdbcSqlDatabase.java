@@ -9,11 +9,15 @@ import com.jdbw.sql.jdbc.conditions.JdbcConditionFactory;
 import com.jdbw.sql.jdbc.meta.JdbcDatabaseMeta;
 import com.jdbw.sql.jdbc.statements.JdbcStatementFactory;
 import com.jdbw.sql.meta.DatabaseMeta;
+import com.jdbw.sql.statements.DeleteBuilder;
+import com.jdbw.sql.statements.DeleteStatement;
 import com.jdbw.sql.statements.InsertBuilder;
 import com.jdbw.sql.statements.InsertStatement;
 import com.jdbw.sql.statements.SelectStatement;
 import com.jdbw.sql.statements.SelectBuilder;
 import com.jdbw.sql.statements.StatementFactory;
+import com.jdbw.sql.statements.UpdateBuilder;
+import com.jdbw.sql.statements.UpdateStatement;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -64,6 +68,16 @@ public class JdbcSqlDatabase implements SqlDatabase {
     @Override
     public InsertStatement.Builder insert(Table table) {
         return new InsertBuilder(mStatementFactory, table);
+    }
+
+    @Override
+    public UpdateStatement.Builder update(Table table) {
+        return new UpdateBuilder(mStatementFactory, table);
+    }
+
+    @Override
+    public DeleteStatement.Builder delete(Table table) {
+        return new DeleteBuilder(mStatementFactory, table);
     }
 
     @Override
