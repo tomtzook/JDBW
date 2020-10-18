@@ -2,6 +2,7 @@ package com.jdbw.sql.jdbc;
 
 import com.jdbw.sql.Column;
 import com.jdbw.sql.ColumnValue;
+import com.jdbw.sql.Order;
 import com.jdbw.sql.conditions.Condition;
 import com.jdbw.sql.exceptions.SqlException;
 import com.jdbw.sql.jdbc.conditions.JdbcCondition;
@@ -35,6 +36,23 @@ public class QueryBuilder {
         if (!model.getWhere().isEmpty()) {
             stringBuilder.append(" WHERE ");
             appendConditionList(stringBuilder, params, model.getWhere());
+        }
+
+        if (!model.getGroup().isEmpty()) {
+            stringBuilder.append(" GROUP BY ");
+            appendColumnList(stringBuilder, model.getGroup());
+        }
+
+        if (!model.getOrder().isEmpty()) {
+            stringBuilder.append(" ORDER BY ");
+            appendOrderList(stringBuilder, model.getOrder());
+        }
+
+        if (model.getLimit() != null) {
+            // TODO: ONLY FOR MYSQL
+            // https://www.w3schools.com/sql/sql_top.asp
+            stringBuilder.append(" LIMIT ");
+            stringBuilder.append(model.getLimit().getAmount());
         }
 
         return new Query(stringBuilder.toString(), params);
@@ -153,6 +171,20 @@ public class QueryBuilder {
             ((JdbcCondition) condition).formatSql(stringBuilder, params);
             if (iterator.hasNext()) {
                 stringBuilder.append(" AND ");
+            }
+        }
+    }
+
+    private void appendOrderList(StringBuilder stringBuilder, Map<Column, Order> order) throws SqlException {
+        for (Iterator<Map.Entry<Column, Order>> iterator = order.entrySet().iterator();
+             iterator.hasNext();) {
+            Map.Entry<Column, Order> entry = iterator.next();
+            stringBuilder.append(entry.getKey().getName());
+            stringBuilder.append(' ');
+            stringBuilder.append(entry.getValue().name());
+
+            if (iterator.hasNext()) {
+                stringBuilder.append(",");
             }
         }
     }

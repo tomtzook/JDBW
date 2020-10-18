@@ -21,13 +21,28 @@ public class Main {
         try (SqlDatabase database = new JdbcSqlDatabase(connectionConfig)) {
             PersonDao personDao = new PersonDao(database, database.meta().table("person"));
 
-            Person person = new Person("Terry", "Crews", "Male");
-            personDao.add(person);
-            System.out.println(personDao.selectAll());
-            person = personDao.update(person, new Person("Terry2", "Crews", "Male"));
-            System.out.println(personDao.selectAll());
-            personDao.delete(person);
-            System.out.println(personDao.selectAll());
+            try2(personDao);
         }
+    }
+
+    private static void try1(PersonDao personDao) throws SqlException {
+        Person person = new Person("Terry", "Crews", "Male");
+        personDao.add(person);
+        System.out.println(personDao.selectAll());
+        person = personDao.update(person, new Person("Terry2", "Crews", "Male"));
+        System.out.println(personDao.selectAll());
+        personDao.delete(person);
+        System.out.println(personDao.selectAll());
+    }
+
+    private static void try2(PersonDao personDao) throws SqlException {
+        personDao.add(
+                new Person("Double", "Trouble", "Non-Binary"),
+                new Person("Catra", "Meowmeow", "Cat"),
+                new Person("Amity", "Blight", "Witch"),
+                new Person("Luz", "Nuceda", "Witch"),
+                new Person("Edith", "Clawthorne", "Witch"));
+
+        System.out.println(personDao.selectTry());
     }
 }

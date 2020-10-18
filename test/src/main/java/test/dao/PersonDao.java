@@ -1,6 +1,8 @@
 package test.dao;
 
 import com.jdbw.sql.Column;
+import com.jdbw.sql.Order;
+import com.jdbw.sql.ResultRow;
 import com.jdbw.sql.SqlDatabase;
 import com.jdbw.sql.Table;
 import com.jdbw.sql.conditions.Condition;
@@ -74,5 +76,13 @@ public class PersonDao {
         return mDatabase.select(mTable)
                 .build()
                 .executeAndCollect(Person.class);
+    }
+
+    public List<ResultRow> selectTry() throws SqlException {
+        return mDatabase.select(mTable)
+                .select(mGender)
+                .groupBy(mGender)
+                .build()
+                .executeAndCollect();
     }
 }
