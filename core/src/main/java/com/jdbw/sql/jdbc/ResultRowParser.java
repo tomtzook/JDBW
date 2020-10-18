@@ -7,6 +7,7 @@ import com.jdbw.sql.exceptions.SqlException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +17,7 @@ public class ResultRowParser {
         Map<String, ColumnValue> values = new HashMap<>();
         try {
             ResultSetMetaData metaData = set.getMetaData();
-            for (int i = 0; i < metaData.getColumnCount(); i++) {
+            for (int i = 1; i <= metaData.getColumnCount(); i++) {
                 String name = metaData.getColumnName(i);
                 int type = metaData.getColumnType(i);
                 Object value = set.getObject(i);
@@ -31,6 +32,9 @@ public class ResultRowParser {
     }
 
     private ColumnValue parseValue(int type, Object value) {
-        return null;
+        if (type == Types.NULL) {
+            return ColumnValue.nullValue();
+        }
+        return ColumnValue.of(value);
     }
 }

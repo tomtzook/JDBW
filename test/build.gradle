@@ -1,0 +1,15 @@
+plugins {
+    id 'application'
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':core')
+
+    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.21'
+}

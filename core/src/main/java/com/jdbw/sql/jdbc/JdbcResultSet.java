@@ -6,13 +6,18 @@ import com.jdbw.sql.exceptions.SqlException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class JdbcResultSet implements QueryResult {
 
+    private final Statement mStatement;
     private final ResultSet mResultSet;
+    private final ResultRowParser mResultRowParser;
 
-    public JdbcResultSet(ResultSet resultSet) {
+    public JdbcResultSet(Statement statement, ResultSet resultSet, ResultRowParser resultRowParser) {
+        mStatement = statement;
         mResultSet = resultSet;
+        mResultRowParser = resultRowParser;
     }
 
     @Override
@@ -25,12 +30,16 @@ public class JdbcResultSet implements QueryResult {
     }
 
     @Override
-    public ResultRow get() {
-        return null;
+    public ResultRow get() throws SqlException {
+        return mResultRowParser.parseRowFromSet(mResultSet);
     }
 
     @Override
     public void close() {
-
+        try {
+            mStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

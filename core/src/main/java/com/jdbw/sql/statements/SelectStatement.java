@@ -1,7 +1,7 @@
 package com.jdbw.sql.statements;
 
 import com.jdbw.sql.Column;
-import com.jdbw.sql.Condition;
+import com.jdbw.sql.conditions.Condition;
 import com.jdbw.sql.GroupBy;
 import com.jdbw.sql.Limit;
 import com.jdbw.sql.OrderBy;

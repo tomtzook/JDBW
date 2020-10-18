@@ -7,7 +7,7 @@ import java.io.Closeable;
 public interface QueryResult extends Closeable {
 
     boolean next() throws SqlException;
-    ResultRow get();
+    ResultRow get() throws SqlException;
 
     @Override
     void close();

@@ -1,7 +1,7 @@
 package com.jdbw.sql.statements.generic;
 
 import com.jdbw.sql.Column;
-import com.jdbw.sql.Condition;
+import com.jdbw.sql.conditions.Condition;
 import com.jdbw.sql.Table;
 
 import java.util.Collection;

@@ -5,19 +5,20 @@ import com.castle.util.throwables.Throwables;
 import com.jdbw.sql.QueryResult;
 import com.jdbw.sql.exceptions.SqlException;
 import com.jdbw.sql.jdbc.JdbcResultSet;
+import com.jdbw.sql.jdbc.ResultRowParser;
 import com.jdbw.sql.statements.SelectStatement;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class JdbcSelectStatement implements SelectStatement {
 
-    private final Statement mStatement;
-    private final String mSql;
+    private final PreparedStatement mStatement;
+    private final ResultRowParser mResultRowParser;
 
-    public JdbcSelectStatement(Statement statement, String sql) {
+    public JdbcSelectStatement(PreparedStatement statement, ResultRowParser resultRowParser) {
         mStatement = statement;
-        mSql = sql;
+        mResultRowParser = resultRowParser;
     }
 
     @Override
@@ -25,14 +26,14 @@ public class JdbcSelectStatement implements SelectStatement {
         ThrowableChain chain = Throwables.newChain();
 
         try {
-            return new JdbcResultSet(mStatement.executeQuery(mSql));
+            return new JdbcResultSet(mStatement, mStatement.executeQuery(), mResultRowParser);
         } catch (SQLException e) {
             chain.chain(e);
-        } finally {
+
             try {
                 mStatement.close();
-            } catch (SQLException e) {
-                chain.chain(e);
+            } catch (SQLException e1) {
+                chain.chain(e1);
             }
         }
 
