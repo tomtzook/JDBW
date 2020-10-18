@@ -1,5 +1,7 @@
 package com.jdbw.sql;
 
+import com.castle.reflect.Types;
+
 import java.util.Objects;
 
 public class ColumnValue {
@@ -35,6 +37,11 @@ public class ColumnValue {
         }
 
         return mRawValue;
+    }
+
+    public <T> T getAs(Class<T> type) {
+        Object value = getRawValue();
+        return Types.smartCast(value, type);
     }
 
     @Override

@@ -22,4 +22,9 @@ public class JdbcTable implements Table {
     public Column column(String name) throws SqlException {
         return mMeta.getColumn(mName, name);
     }
+
+    @Override
+    public String toString() {
+        return String.format("Table{%s}", mName);
+    }
 }

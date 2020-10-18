@@ -14,7 +14,24 @@ public class ResultRow {
         return mColumns.size();
     }
 
+    public boolean hasValue(Column column) {
+        return hasValue(column.getName());
+    }
+
+    public boolean hasValue(String columnName) {
+        return mColumns.containsKey(columnName);
+    }
+
+    public ColumnValue getValue(Column column) {
+        return getValue(column.getName());
+    }
+
     public ColumnValue getValue(String columnName) {
         return mColumns.get(columnName);
+    }
+
+    @Override
+    public String toString() {
+        return mColumns.toString();
     }
 }

@@ -2,12 +2,12 @@ package test;
 
 import com.jdbw.sql.Column;
 import com.jdbw.sql.QueryResult;
-import com.jdbw.sql.ResultRow;
 import com.jdbw.sql.SqlDatabase;
 import com.jdbw.sql.Table;
 import com.jdbw.sql.exceptions.SqlException;
 import com.jdbw.sql.jdbc.ConnectionConfig;
 import com.jdbw.sql.jdbc.JdbcSqlDatabase;
+import test.models.User;
 
 import java.io.IOException;
 
@@ -25,17 +25,14 @@ public class Main {
             Column username = table.column("username");
             Column password = table.column("password");
 
-            try (QueryResult result = database.select(table)
-                    .select(username)
+            System.out.println(table);
+            System.out.println(username);
+            System.out.println(password);
+
+            database.select(table)
                     .where(password.equal("Sanandres12").and(username.equal("tomtzook")))
                     .build()
-                    .execute()) {
-
-                while (result.next()) {
-                    ResultRow resultRow = result.get();
-                    System.out.println(resultRow.getValue("username"));
-                }
-            }
+                    .executeForEach(System.out::println, User.class);
         }
     }
 }

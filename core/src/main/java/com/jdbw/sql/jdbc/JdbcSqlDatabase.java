@@ -1,5 +1,6 @@
 package com.jdbw.sql.jdbc;
 
+import com.jdbw.sql.ReflectionModelLoader;
 import com.jdbw.sql.SqlDatabase;
 import com.jdbw.sql.Table;
 import com.jdbw.sql.conditions.ConditionFactory;
@@ -30,7 +31,7 @@ public class JdbcSqlDatabase implements SqlDatabase {
     }
 
     public JdbcSqlDatabase(Connection connection) {
-        this(connection, new JdbcStatementFactory(connection, new QueryBuilder(), new SqlObjectAdapter(), new ResultRowParser()), new JdbcConditionFactory());
+        this(connection, new JdbcStatementFactory(connection, new QueryBuilder(), new SqlObjectAdapter(), new ResultRowParser(), new ReflectionModelLoader()), new JdbcConditionFactory());
     }
 
     public JdbcSqlDatabase(ConnectionConfig connectionConfig, StatementFactory statementFactory, ConditionFactory conditionFactory) throws SqlException {

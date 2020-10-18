@@ -1,6 +1,7 @@
 package com.jdbw.sql.jdbc.statements;
 
 import com.castle.nio.temp.TempPathGenerator;
+import com.jdbw.sql.ModelLoader;
 import com.jdbw.sql.QueryResult;
 import com.jdbw.sql.jdbc.ResultRowParser;
 import org.junit.jupiter.api.AfterEach;
@@ -15,6 +16,7 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.Mockito.mock;
 
 class JdbcSelectStatementTest {
 
@@ -46,7 +48,7 @@ class JdbcSelectStatementTest {
     public void execute_forValidSelectStatementOnEmptyDb_executesAndReturnsEmpty() throws Exception {
         final String SQL = "SELECT * FROM " + EXISTING_TABLE;
         try (PreparedStatement jdbcStatement = mConnection.prepareStatement(SQL)) {
-            JdbcSelectStatement statement = new JdbcSelectStatement(jdbcStatement, new ResultRowParser());
+            JdbcSelectStatement statement = new JdbcSelectStatement(jdbcStatement, new ResultRowParser(), mock(ModelLoader.class));
             try (QueryResult result = statement.execute()) {
                 assertFalse(result.next());
             }

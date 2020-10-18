@@ -52,4 +52,9 @@ public class JdbcColumn implements Column {
     public Condition notEqual(ColumnValue value) {
         return mConditionFactory.notEqual(this, value);
     }
+
+    @Override
+    public String toString() {
+        return String.format("Column{name=%s,type=%s,flags=%s}", mName, mType, mFlags);
+    }
 }

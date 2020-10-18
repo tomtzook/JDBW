@@ -1,5 +1,6 @@
 package com.jdbw.sql.jdbc.statements;
 
+import com.jdbw.sql.ModelLoader;
 import com.jdbw.sql.exceptions.SqlException;
 import com.jdbw.sql.jdbc.Query;
 import com.jdbw.sql.jdbc.QueryBuilder;
@@ -20,12 +21,15 @@ public class JdbcStatementFactory implements StatementFactory {
     private final QueryBuilder mQueryBuilder;
     private final SqlObjectAdapter mObjectAdapter;
     private final ResultRowParser mResultRowParser;
+    private final ModelLoader mModelLoader;
 
-    public JdbcStatementFactory(Connection connection, QueryBuilder queryBuilder, SqlObjectAdapter objectAdapter, ResultRowParser resultRowParser) {
+    public JdbcStatementFactory(Connection connection, QueryBuilder queryBuilder, SqlObjectAdapter objectAdapter,
+                                ResultRowParser resultRowParser, ModelLoader modelLoader) {
         mConnection = connection;
         mQueryBuilder = queryBuilder;
         mObjectAdapter = objectAdapter;
         mResultRowParser = resultRowParser;
+        mModelLoader = modelLoader;
     }
 
     @Override
@@ -35,7 +39,7 @@ public class JdbcStatementFactory implements StatementFactory {
             PreparedStatement statement = mConnection.prepareStatement(query.getSql());
             fillParameters(statement, query.getParams());
 
-            return new JdbcSelectStatement(statement, mResultRowParser);
+            return new JdbcSelectStatement(statement, mResultRowParser, mModelLoader);
         } catch (SQLException e) {
             throw new SqlException(e);
         }
